@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}<title>Поиск аналогов инструмента</title>{% endblock %}
+{% block content %}
+    <form method="POST" action="{{ url_for('index') }}">
+        {{ form.csrf_token }}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                {{ form.submit(class="btn btn-outline-secondary") }}
+            </div>
+            {{ form.search(class="form-control", placeholder="") }}
+        </div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                {% for subfield in form.search_type %}
+                  <label class="btn btn-outline-secondary btn-sm {% if subfield.label == 'ngram_search' %}active{% endif %}">
+                    {{ subfield() }}
+                    {{ subfield.label }}
+                  </label>
+                {% endfor %}
+            </div>
+     </form>
+
+    {% if not_found %}
+        <br>
+        <div class="card">
+          <div class="card-body">
+            <p class="card-text">Не найдено</p>
+          </div>
+        </div>
+    {% endif %}
+    {% if result %}
+        <br>
+        {% for item in result %}
+            <div class="card">
+              <div class="card-body">
+                <p class="card-text">Исходный инструмент: {{ item.base_name }} {{ item.base_maker }} <br> Аналог: {{ item.analog_name }} {{ item.analog_maker }}</p>
+{#                <a href="#" class="card-success">Скопировать обозначение аналога</a>#}
+              </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
