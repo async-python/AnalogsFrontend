@@ -10,6 +10,10 @@
       </li>
       <li class="nav-item {% if url_for(request.endpoint) == url_for('search_product') %}active{% endif %}" >
         <a class="nav-link" href="{{ url_for('search_product') }}">Search Products</a>
+            </li>
+      <li class="nav-item {% if url_for(request.endpoint) == url_for('search_analogs_list') %}active{% endif %}">
+        <a class="nav-link" href="{{ url_for('search_analogs_list') }}">Search list analogs</a>
+      </li>
       </li>
       <li class="nav-item {% if url_for(request.endpoint) == url_for('upload_xlsx') %}active{% endif %}">
         <a class="nav-link" href="{{ url_for('upload_xlsx') }}">Load analogs</a>

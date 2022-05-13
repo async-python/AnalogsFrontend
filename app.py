@@ -1,21 +1,19 @@
 from datetime import datetime
-from pathlib import Path
 
 import aiofiles.os
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_bootstrap import Bootstrap4
-from werkzeug.datastructures import FileStorage
 
-from core.config import Config
+from core.config import Config, BASE_DIR
 from forms import SearchForm, SearchFormProduct, UploadForm
 from utils.async_funcs import fetch, fetch_file
+from utils.choices import Response_type
 from utils.data_models import HTTPResponse
+from utils.form_utils import save_form_file
 
 app = Flask(__name__)
 bootstrap = Bootstrap4(app)
 app.config.from_object(Config)
-
-BASE_DIR = Path(__file__).resolve(strict=True).parent
 
 
 @app.context_processor
@@ -60,10 +58,7 @@ async def search_product():
 async def upload_xlsx():
     form = UploadForm()
     if form.validate_on_submit():
-        file: FileStorage = form.file.data
-        file_name = file.filename
-        file_path = str(BASE_DIR / f'static/{file_name}')
-        file.save(file_path)
+        file_path, file_name = save_form_file(form)
         url = f'http://analoghub.servebeer.com/api/v1/analog/upload_analogs'
         response = await fetch_file(url, file_path, file_name, 'xlsx_file')
         await aiofiles.os.remove(file_path)
@@ -75,15 +70,34 @@ async def upload_xlsx():
 async def upload_zip():
     form = UploadForm()
     if form.validate_on_submit():
-        file: FileStorage = form.file.data
-        file_name = file.filename
-        file_path = str(BASE_DIR / f'static/{file_name}')
-        file.save(file_path)
+        file_path, file_name = save_form_file(form)
         url = f'http://analoghub.servebeer.com/api/v1/analog/upload_makers'
         response = await fetch_file(url, file_path, file_name, 'zip_file')
         await aiofiles.os.remove(file_path)
-        return {'response': response.status, 'detail': response.body}
+        return render_template(
+            'upload_zip.html', form=form, result=response.body)
     return render_template('upload_zip.html', form=form)
+
+
+@app.route('/search_analogs_list', methods=['GET', 'POST'])
+async def search_analogs_list():
+    form = UploadForm()
+    if form.validate_on_submit():
+        file_path, file_name = save_form_file(form)
+        url = f'http://analoghub.servebeer.com/api/v1/analog/search_list_analogs'
+        await fetch_file(
+            url, file_path, file_name, 'xlsx_file', Response_type.Xlsx)
+        await aiofiles.os.remove(file_path)
+        try:
+            return send_from_directory(BASE_DIR.joinpath('static'),
+                                       'response.xlsx',
+                                       as_attachment=True)
+        except FileNotFoundError:
+            pass
+        return render_template(
+            'search_analog_list.html', form=form)
+    return render_template('search_analog_list.html', form=form)
+
 
 if __name__ == '__main__':
     app.run()
