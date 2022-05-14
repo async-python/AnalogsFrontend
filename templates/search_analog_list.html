@@ -4,7 +4,7 @@
 {% with url_action=url_for('search_analogs_list'), form=form %}
     {% include "includes/file_form.html" %}
 {% endwith %}
-{% with result=result %}
-    {% include "includes/result_upload.html" %}
+{% with result=resonse_file %}
+    {% include "includes/result_file.html" %}
 {% endwith %}
 {% endblock %}

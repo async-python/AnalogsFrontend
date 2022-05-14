@@ -47,3 +47,4 @@ async def fetch_file(url: str, file_path: str, file_name: str, file_type: str,
                     f = await aiofiles.open(response_path, mode='wb')
                     await f.write(await response.read())
                     await f.close()
+                return response_filename

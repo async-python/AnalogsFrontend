@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import aiofiles.os
+from werkzeug.exceptions import NotFound
 from flask import Flask, render_template, send_from_directory
 from flask_bootstrap import Bootstrap4
 
@@ -85,18 +86,22 @@ async def search_analogs_list():
     if form.validate_on_submit():
         file_path, file_name = save_form_file(form)
         url = f'http://analoghub.servebeer.com/api/v1/analog/search_list_analogs'
-        await fetch_file(
+        response_file = await fetch_file(
             url, file_path, file_name, 'xlsx_file', Response_type.Xlsx)
         await aiofiles.os.remove(file_path)
-        try:
-            return send_from_directory(BASE_DIR.joinpath('static'),
-                                       'response.xlsx',
-                                       as_attachment=True)
-        except FileNotFoundError:
-            pass
         return render_template(
-            'search_analog_list.html', form=form)
+            'search_analog_list.html', form=form, resonse_file=response_file)
     return render_template('search_analog_list.html', form=form)
+
+
+@app.route('/get_file/<string:file_name>', methods=['GET'])
+async def get_file(file_name: str):
+    try:
+        return send_from_directory(
+            BASE_DIR.joinpath('static'), file_name, as_attachment=True)
+    except NotFound as err:
+        print(type(err))
+        return {'fail': 'fail'}
 
 
 if __name__ == '__main__':
