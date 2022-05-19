@@ -54,6 +54,8 @@ doc.html
 .DS_Store
 .vscode/
 
+static/
+
 tmp/
 movies_admin/
 sqlite_to_postgres/
@@ -67,3 +69,4 @@ state.yaml
 .env
 .local.env
 .prod.env
+/static/
