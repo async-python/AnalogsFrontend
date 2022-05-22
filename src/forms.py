@@ -1,22 +1,22 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from wtforms import RadioField, SearchField, SelectField, SubmitField, StringField, PasswordField
+from wtforms import RadioField, SearchField, SelectField, SubmitField
 from wtforms.validators import DataRequired
 
 
 class SearchForm(FlaskForm):
-    search = SearchField(label='Поиск', validators=[DataRequired()])
+    search = SearchField(label='Search', validators=[DataRequired()])
     search_type = RadioField(
-        'Тип поиска', [DataRequired()],
-        choices=[('string_search', 'точный поиск'),
-                 ('ngram_search', 'неточный поиск')],
+        'Search type', [DataRequired()],
+        choices=[('string_search', 'accurate search'),
+                 ('ngram_search', 'elasticsearch')],
         default='ngram_search')
-    submit = SubmitField(label='Найти')
+    submit = SubmitField(label='Search')
 
 
 class SearchFormProduct(SearchForm):
     maker = SelectField(
-        'Тип поиска', [DataRequired()],
+        'Search type', [DataRequired()],
         choices=['ALL', 'PALBIT', 'YG-1', 'VERGNANO', 'VARGUS', 'SANHOG',
                  'OMAP', 'NANOLOY', 'LIKON', 'HORN', 'HELION',
                  'GABRIEL_MAUVAIS', 'FRESAL', 'DEREK', 'BRICE', 'Bribase',
@@ -26,9 +26,3 @@ class SearchFormProduct(SearchForm):
 
 class UploadForm(FlaskForm):
     file = FileField(validators=[FileRequired()])
-
-
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField()

@@ -1,6 +1,6 @@
 from werkzeug.datastructures import FileStorage
 
-from core.config import BASE_DIR
+from core.conf import BASE_DIR
 from src.forms import UploadForm
 
 

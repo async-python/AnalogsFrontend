@@ -21,12 +21,12 @@
           <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.upload_zip') %}active{% endif %}">
             <a class="nav-link" href="{{ url_for('analog.upload_zip') }}">Load products</a>
           </li>
-          <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.logout') %}active{% endif %}">
-            <a class="nav-link" href="{{ url_for('analog.logout') }}">Logout</a>
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('auth.logout') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
           </li>
         {% else %}
-          <li class="nav-item {% if url_for(request.endpoint) == url_for('analog.login') %}active{% endif %}">
-            <a class="nav-link" href="{{ url_for('analog.login') }}">Login</a>
+          <li class="nav-item {% if url_for(request.endpoint) == url_for('auth.login') %}active{% endif %}">
+            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
           </li>
         {% endif %}
     </ul>

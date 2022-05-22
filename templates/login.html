@@ -8,8 +8,7 @@
             </div>
         </div>
     {% endif %}
-{#    <form method="POST" action="{{ url_for('analog.login', next=request.args.get('next')) }}">#}
-        <form method="POST" action="{{ url_for('analog.login') }}">
+    <form method="POST" action="{{ url_for('auth.login', next=request.args.get('next')) }}">
         {{ form.csrf_token }}
         <div class="form-group row">
             {{ form.username.label(class="col-sm-2 col-form-label") }}

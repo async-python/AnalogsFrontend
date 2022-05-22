@@ -4,7 +4,7 @@ import aiofiles
 import aiohttp
 from aiohttp import FormData
 
-from core.config import BASE_DIR
+from core.conf import BASE_DIR
 from utils.choices import Response_type
 from utils.data_models import HTTPResponse
 

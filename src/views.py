@@ -1,42 +1,18 @@
 import aiofiles.os
-from flask_login import login_user
-from werkzeug.exceptions import NotFound
-from flask import (render_template, send_from_directory, redirect,
-                   url_for, Blueprint)
-from flask_login import login_manager, login_required, logout_user
-from core.config import BASE_DIR
-from src.forms import SearchForm, SearchFormProduct, UploadForm, LoginForm
-from src.users import User
+from werkzeug.exceptions import NotFound, abort
+from flask import (render_template, send_from_directory, Blueprint)
+from flask_login import login_required
+from core.conf import BASE_DIR
+from src.forms import SearchForm, SearchFormProduct, UploadForm
 from utils.async_funcs import fetch, fetch_file
 from utils.choices import Response_type
 from utils.data_models import HTTPResponse
 from utils.form_utils import save_form_file
-from werkzeug.security import generate_password_hash, check_password_hash
 
 
 analog = Blueprint('analog', __name__,
                    template_folder=BASE_DIR / 'templates',
                    static_folder=BASE_DIR / 'static')
-
-
-@analog.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(name=form.username.data).first()
-        if not user or not check_password_hash(
-                user.password_hash, form.password.data):
-            return render_template(
-                'login.html', form=form, message='name or password not valid')
-        login_user(user, remember=form.data)
-        return redirect(url_for('analog.index'))
-    return render_template('login.html', form=form)
-
-
-@analog.route('/logout', methods=['GET'])
-def logout():
-    logout_user()
-    return redirect(url_for('analog.index'))
 
 
 @analog.route('/', methods=['GET', 'POST'])
@@ -113,10 +89,9 @@ async def search_analogs_list():
 
 
 @analog.route('/get_file/<string:file_name>', methods=['GET'])
-async def get_file(file_name: str):
+def get_file(file_name: str):
     try:
         return send_from_directory(
             BASE_DIR.joinpath('static'), file_name, as_attachment=True)
-    except NotFound as err:
-        print(type(err))
-        return {'fail': 'fail'}
+    except NotFound:
+        abort(404)
